@@ -11,10 +11,21 @@ const clientSecret = process.env.SPOTIFY_CLIENT_SECRET;
 const refreshToken = process.env.SPOTIFY_REFRESH_TOKEN;
 const cors = require('cors');
 
+const allowedOrigins = [
+    'https://api-spotify-portfolio.up.railway.app',
+    'https://alexis-delaunay.fr'
+  ];
+  
 app.use(cors({
-    origin: 'https://alexis-delaunay.fr',
-    credentials: true,
-}));
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Origine non autorisée par CORS'));
+      }
+    },
+    credentials: true
+  }));
 
 // Fonction pour rafraîchir le token Spotify
 async function refreshSpotifyToken() {
